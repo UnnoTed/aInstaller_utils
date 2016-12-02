@@ -2,7 +2,8 @@ package main
 
 import (
 	"errors"
-	"log"
+	"flag"
+	"fmt"
 	"os"
 	"regexp"
 	"strings"
@@ -34,15 +35,25 @@ var (
 
 	psapi                 = syscall.NewLazyDLL("psapi.dll")
 	getModuleFileNameProc = psapi.NewProc("GetProcessImageFileNameW")
+
+	steamMode bool
 )
 
-func main() {
-	libs, err := FindSteamLibrary()
-	if err != nil {
-		panic(err)
-	}
+func init() {
+	flag.BoolVar(&steamMode, "steam-location", false, "")
+}
 
-	log.Println(libs)
+func main() {
+	flag.Parse()
+
+	if steamMode {
+		libs, err := FindSteamLibrary()
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println(libs[0])
+	}
 }
 
 func getModuleFileName(pid int) (string, error) {
