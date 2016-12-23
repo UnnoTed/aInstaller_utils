@@ -35,7 +35,7 @@ var (
 	getModuleFileNameProc = psapi.NewProc("GetProcessImageFileNameW")
 )
 
-func getModuleFileName(pid int) (string, error) {
+func GetModuleFileName(pid int) (string, error) {
 	var n uint32
 	b := make([]uint16, syscall.MAX_PATH)
 	size := uint32(len(b))
@@ -79,7 +79,7 @@ func FindSteamPath() (string, error) {
 		for _, proc := range list {
 			if strings.Compare(strings.ToLower(proc.Executable()), "steam.exe") == 0 {
 				// get full file path from process id
-				path, err := getModuleFileName(proc.Pid())
+				path, err := GetModuleFileName(proc.Pid())
 				if err != nil {
 					return "", err
 				}
