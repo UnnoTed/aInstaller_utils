@@ -123,14 +123,27 @@ func FindSteamLibrary() ([]string, error) {
 		}
 	}
 
-	for i, p := range list {
-		// filter to remove invalid paths
-		if !isSteamPathValid(p) {
-			list = append(list[:i], list[i+1:]...)
+	for true {
+		i, c := ContainsInvalidGamePath(list)
+		if !c {
+			break
 		}
+
+		list = append(list[:i], list[i+1:]...)
 	}
 
 	return list, nil
+}
+
+func ContainsInvalidGamePath(list []string) (int, bool) {
+	for i, p := range list {
+		// filter to remove invalid paths
+		if !isSteamPathValid(p) {
+			return i, true
+		}
+	}
+
+	return 0, false
 }
 
 // FindGame loops through steam libraries to check if the game
